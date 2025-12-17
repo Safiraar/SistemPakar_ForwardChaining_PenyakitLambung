@@ -9,6 +9,13 @@ from rules import (
     certainty_factor
 )
 
+cf_user_map = {
+    "Tidak Yakin": 0.2,
+    "Cukup Yakin": 0.5,
+    "Yakin": 0.8,
+    "Sangat Yakin": 1.0
+}
+
 st.set_page_config(page_title="Sistem Pakar Penyakit Lambung", layout="wide")
 
 # ===== Session State =====
@@ -29,6 +36,10 @@ if "selected_gejala" not in st.session_state:
 
 if "hasil" not in st.session_state:
     st.session_state.hasil = {}
+    
+if "cf_user" not in st.session_state:
+    st.session_state.cf_user = {}
+
 
 # ===== Sidebar Navigation =====
 st.sidebar.title("📌 Page")
@@ -90,9 +101,17 @@ elif st.session_state.page == "Diagnosa":
             if st.checkbox(nama_gejala, value=checked, key=kode):
                 if kode not in st.session_state.selected_gejala:
                     st.session_state.selected_gejala.append(kode)
+
+                st.session_state.cf_user[kode] = st.selectbox(
+                    f"Tingkat keyakinan {nama_gejala}",
+                    cf_user_map.keys(),
+                    key=f"cf_{kode}"
+                )
             else:
                 if kode in st.session_state.selected_gejala:
                     st.session_state.selected_gejala.remove(kode)
+                    st.session_state.cf_user.pop(kode, None)
+
 
     # -------- KANAN: RECEIPT REAL-TIME --------
     with col2:
