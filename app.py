@@ -154,6 +154,6 @@ elif st.session_state.page == "Hasil":
         st.success(f"Penyakit Anda : **{penyakit[kode_tertinggi]}**")
         # st.write(f"Dengan tingkat kecocokan: **{hasil_urut[kode_tertinggi]*100:.2f}%**")
 
-    st.caption("⚠️ Sistem ini hanya sebagai alat bantu, bukan pengganti diagnosis dokter.")
+    st.caption("⚠️ Sistem ini hanya sebagai alat bantu.")
     
 st.sidebar.caption("Sistem by: Safira Aulia Rahma-4611422125")
