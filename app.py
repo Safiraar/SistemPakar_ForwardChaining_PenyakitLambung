@@ -4,30 +4,118 @@
 import streamlit as st
 from rules import penyakit, gejala, forward_chaining
 
-st.set_page_config(page_title="Sistem Pakar Penyakit Lambung", layout="centered")
+st.set_page_config(page_title="Sistem Pakar Penyakit Lambung", layout="wide")
 
-st.title("🩺 Sistem Pakar Deteksi Penyakit Lambung")
-st.write("Pilih gejala yang Anda alami, lalu sistem akan menganalisis kemungkinan penyakit menggunakan metode **Forward Chaining**.")
+# ===== Session State =====
+if "page" not in st.session_state:
+    st.session_state.page = "Pengenalan"
 
-st.subheader("Daftar Gejala")
+if "nama" not in st.session_state:
+    st.session_state.nama = ""
 
-selected_gejala = []
-for kode, nama in gejala.items():
-    if st.checkbox(nama):
-        selected_gejala.append(kode)
+if "usia" not in st.session_state:
+    st.session_state.usia = 0
 
-if st.button("Proses Diagnosa"):
-    if not selected_gejala:
-        st.warning("Silakan pilih minimal satu gejala.")
-    else:
-        hasil = forward_chaining(selected_gejala)
-        if not hasil:
-            st.error("Tidak ditemukan kecocokan penyakit berdasarkan gejala yang dipilih.")
+if "selected_gejala" not in st.session_state:
+    st.session_state.selected_gejala = []
+
+if "hasil" not in st.session_state:
+    st.session_state.hasil = {}
+
+# ===== Sidebar Navigation =====
+st.sidebar.title("📌 Navigasi")
+st.session_state.page = st.sidebar.radio(
+    "Pilih Halaman",
+    ["Pengenalan", "Diagnosa", "Hasil"]
+)
+
+# =============================
+# PAGE 1: PENGENALAN
+# =============================
+if st.session_state.page == "Pengenalan":
+    st.title("🩺 Sistem Pakar Deteksi Penyakit Lambung")
+    st.write(
+        "Sistem ini dirancang untuk membantu mendeteksi kemungkinan penyakit lambung "
+        "berdasarkan gejala yang Anda rasakan. \n\n"
+        "Anda akan diminta untuk memasukkan identitas singkat serta memilih gejala, "
+        "kemudian sistem akan melakukan analisis menggunakan metode **Forward Chaining**."
+    )
+    st.info("Gunakan menu di samping kiri untuk melanjutkan ke halaman Diagnosa.")
+
+# =============================
+# PAGE 2: DIAGNOSA
+# =============================
+elif st.session_state.page == "Diagnosa":
+    st.title("📝 Input Data & Gejala")
+
+    st.subheader("Data Pengguna")
+    st.session_state.nama = st.text_input("Nama", st.session_state.nama)
+    st.session_state.usia = st.number_input("Usia", min_value=0, max_value=120, value=st.session_state.usia)
+
+    st.divider()
+    st.subheader("Pilih Gejala")
+
+    col1, col2 = st.columns(2)
+
+    # ===== KIRI: LIST GEJALA =====
+    with col1:
+        st.markdown("**Daftar Gejala**")
+        for kode, nama_gejala in gejala.items():
+            checked = kode in st.session_state.selected_gejala
+            if st.checkbox(nama_gejala, value=checked, key=kode):
+                if kode not in st.session_state.selected_gejala:
+                    st.session_state.selected_gejala.append(kode)
+            else:
+                if kode in st.session_state.selected_gejala:
+                    st.session_state.selected_gejala.remove(kode)
+
+    # ===== KANAN: RECEIPT REAL-TIME =====
+    with col2:
+        st.markdown("**Ringkasan (Real-Time)**")
+        st.write(f"Nama : {st.session_state.nama}")
+        st.write(f"Usia : {st.session_state.usia} tahun")
+        st.write("Gejala yang dipilih:")
+        if st.session_state.selected_gejala:
+            for g in st.session_state.selected_gejala:
+                st.write(f"- {gejala[g]}")
         else:
-            st.subheader("Hasil Diagnosa")
-            hasil_urut = dict(sorted(hasil.items(), key=lambda x: x[1], reverse=True))
-            for kode, nilai in hasil_urut.items():
-                st.write(f"**{penyakit[kode]}** : {nilai*100:.2f}% kecocokan")
-            st.success(f"Kemungkinan terbesar: **{penyakit[next(iter(hasil_urut))]}**")
+            st.caption("Belum ada gejala dipilih")
 
-st.caption("⚠️ Hasil ini bersifat pendukung, bukan pengganti diagnosis dokter.")
+    if st.button("🔍 Proses Diagnosa"):
+        if not st.session_state.nama or not st.session_state.selected_gejala:
+            st.warning("Nama dan minimal satu gejala wajib diisi.")
+        else:
+            st.session_state.hasil = forward_chaining(st.session_state.selected_gejala)
+            st.session_state.page = "Hasil"
+            st.experimental_rerun()
+
+# =============================
+# PAGE 3: HASIL
+# =============================
+elif st.session_state.page == "Hasil":
+    st.title("📄 Hasil Diagnosa")
+
+    if not st.session_state.hasil:
+        st.error("Belum ada proses diagnosa.")
+    else:
+        hasil_urut = dict(sorted(
+            st.session_state.hasil.items(),
+            key=lambda x: x[1],
+            reverse=True
+        ))
+
+        kode_tertinggi = next(iter(hasil_urut))
+
+        st.subheader("Receipt")
+        st.write(f"Nama : {st.session_state.nama}")
+        st.write(f"Usia : {st.session_state.usia} tahun")
+        st.write("Gejala:")
+        for g in st.session_state.selected_gejala:
+            st.write(f"- {gejala[g]}")
+
+        st.divider()
+        st.subheader("Hasil Deteksi")
+        st.success(f"Kemungkinan terbesar: **{penyakit[kode_tertinggi]}**")
+        st.write(f"Tingkat kecocokan: **{hasil_urut[kode_tertinggi]*100:.2f}%**")
+
+    st.caption("⚠️ Sistem ini hanya sebagai alat bantu, bukan pengganti diagnosis dokter.")
