@@ -9,13 +9,6 @@ from rules import (
     certainty_factor
 )
 
-cf_user_map = {
-    "Tidak Yakin": 0.2,
-    "Cukup Yakin": 0.5,
-    "Yakin": 0.8,
-    "Sangat Yakin": 1.0
-}
-
 st.set_page_config(page_title="Sistem Pakar Penyakit Lambung", layout="wide")
 
 # ===== Session State =====
