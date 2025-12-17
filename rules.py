@@ -1,12 +1,5 @@
 from app import cf_user_map
 
-cf_user_map = {
-    "Tidak Yakin": 0.2,
-    "Cukup Yakin": 0.5,
-    "Yakin": 0.8,
-    "Sangat Yakin": 1.0
-}
-
 penyakit = {
     "P01": "Maag",
     "P02": "GERD",
@@ -69,6 +62,17 @@ rules_cf = {
     }
 }
 
+# =============================
+# CF USER
+# =============================
+cf_user_map = {
+    "Tidak Yakin": 0.2,
+    "Kurang Yakin": 0.4,
+    "Cukup Yakin": 0.6,
+    "Yakin": 0.8,
+    "Sangat Yakin": 1.0
+}
+
 def forward_chaining(selected_gejala):
     kandidat = []
     for p, daftar_gejala in rules_fc.items():
@@ -76,27 +80,29 @@ def forward_chaining(selected_gejala):
             kandidat.append(p)
     return kandidat
 
-def certainty_factor(kandidat, selected_gejala, cf_user_input):
+# =============================
+# CERTAINTY FACTOR
+# =============================
+def certainty_factor(kandidat, selected_gejala, cf_user):
     hasil = {}
 
     for p in kandidat:
-        cf_values = []
+        cf_combine = 0
+        first = True
 
         for g in selected_gejala:
-            if g in rules_cf[p] and g in cf_user_input:
+            if g in rules_cf[p] and g in cf_user:
                 cf_pakar = rules_cf[p][g]
-                cf_user = cf_user_map[cf_user_input[g]]
-                cf_values.append(cf_pakar * cf_user)
+                cf_u = cf_user[g]
+                cf = cf_pakar * cf_u
 
-        # Urutkan CF terbesar ke terkecil
-        cf_values.sort(reverse=True)
-
-        cf_combine = 0
-        for cf in cf_values:
-            cf_combine = cf_combine + cf * (1 - cf_combine)
+                if first:
+                    cf_combine = cf
+                    first = False
+                else:
+                    cf_combine = cf_combine + cf * (1 - cf_combine)
 
         if cf_combine > 0:
             hasil[p] = cf_combine
 
     return hasil
-
