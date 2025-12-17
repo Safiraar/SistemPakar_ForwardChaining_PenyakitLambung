@@ -81,6 +81,17 @@ elif st.session_state.page == "Diagnosa":
                         list(cf_user_map.keys()),
                         key=f"cf_{kode}"
                     )
+                    if st.checkbox(nama_gejala, key=kode):
+    if kode not in st.session_state.selected_gejala:
+        st.session_state.selected_gejala.append(kode)
+
+    pilihan_cf = st.selectbox(
+        f"Tingkat keyakinan {nama_gejala}",
+        list(cf_user_map.keys()),
+        key=f"cf_{kode}"
+    )
+    st.session_state.cf_user[kode] = cf_user_map[pilihan_cf]
+
             else:
                 if kode in st.session_state.selected_gejala:
                     st.session_state.selected_gejala.remove(kode)
