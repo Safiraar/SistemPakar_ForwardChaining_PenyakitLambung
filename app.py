@@ -87,7 +87,7 @@ elif st.session_state.page == "Diagnosa":
         else:
             st.session_state.hasil = forward_chaining(st.session_state.selected_gejala)
             st.session_state.page = "Hasil"
-            st.experimental_rerun()
+            st.rerun()
 
 # =============================
 # PAGE 3: HASIL
