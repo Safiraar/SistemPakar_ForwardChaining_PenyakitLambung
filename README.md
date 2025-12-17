@@ -1,0 +1,1 @@
+# SistemPakar_ForwardChaining_PenyakitLambung
