@@ -10,6 +10,9 @@ st.set_page_config(page_title="Sistem Pakar Penyakit Lambung", layout="wide")
 if "page" not in st.session_state:
     st.session_state.page = "Pengenalan"
 
+if "diagnosa_selesai" not in st.session_state:
+    st.session_state.diagnosa_selesai = False
+
 if "nama" not in st.session_state:
     st.session_state.nama = ""
 
