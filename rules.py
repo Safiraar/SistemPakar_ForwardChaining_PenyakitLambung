@@ -1,5 +1,3 @@
-from app import cf_user_map
-
 penyakit = {
     "P01": "Maag",
     "P02": "GERD",
