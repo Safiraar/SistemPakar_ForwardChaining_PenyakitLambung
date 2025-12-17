@@ -6,7 +6,8 @@ from rules import (
     penyakit, 
     gejala,
     forward_chaining, 
-    certainty_factor
+    certainty_factor,
+    cf_user_map
 )
 
 st.set_page_config(page_title="Sistem Pakar Penyakit Lambung", layout="wide")
@@ -72,31 +73,26 @@ elif st.session_state.page == "Diagnosa":
     with col1:
         st.markdown("### Daftar Gejala")
         for kode, nama_gejala in gejala.items():
-            if st.checkbox(nama_gejala, key=kode):
+
+            checked = kode in st.session_state.selected_gejala
+
+            if st.checkbox(nama_gejala, value=checked, key=kode):
+
                 if kode not in st.session_state.selected_gejala:
                     st.session_state.selected_gejala.append(kode)
-                st.session_state.cf_user[kode] = cf_user_map[
-                    st.selectbox(
-                        f"Tingkat keyakinan {nama_gejala}",
-                        list(cf_user_map.keys()),
-                        key=f"cf_{kode}"
-                    )
-                    if st.checkbox(nama_gejala, key=kode):
-    if kode not in st.session_state.selected_gejala:
-        st.session_state.selected_gejala.append(kode)
 
-    pilihan_cf = st.selectbox(
-        f"Tingkat keyakinan {nama_gejala}",
-        list(cf_user_map.keys()),
-        key=f"cf_{kode}"
-    )
-    st.session_state.cf_user[kode] = cf_user_map[pilihan_cf]
+                pilihan_cf = st.selectbox(
+                    f"Tingkat keyakinan {nama_gejala}",
+                    list(cf_user_map.keys()),
+                    key=f"cf_{kode}"
+                )
+
+                st.session_state.cf_user[kode] = cf_user_map[pilihan_cf]
 
             else:
                 if kode in st.session_state.selected_gejala:
                     st.session_state.selected_gejala.remove(kode)
                     st.session_state.cf_user.pop(kode, None)
-
     with col2:
         st.markdown("### Ringkasan")
         st.write(f"**Nama** : {st.session_state.nama}")
