@@ -1,8 +1,3 @@
-# =============================
-# FILE: rules.py
-# =============================
-# Basis pengetahuan Sistem Pakar Penyakit Lambung
-
 penyakit = {
     "P01": "Maag",
     "P02": "GERD",
@@ -34,19 +29,63 @@ gejala = {
 }
 
 # Rules berbasis Forward Chaining
-rules = {
-    "P01": ["G01", "G02", "G03", "G04", "G06", "G15", "G20"],
-    "P02": ["G01", "G02", "G03", "G05", "G06", "G11", "G13", "G18", "G19", "G20"],
-    "P03": ["G03", "G04", "G06", "G11", "G13", "G18"],
-    "P04": ["G02", "G07", "G08", "G09", "G10", "G12", "G14", "G16", "G17"]
+rules_fc = {
+    "P01": ["G01", "G02", "G03", "G04", "G06", "G20"],
+    "P02": ["G01", "G02", "G03", "G05", "G06", "G15", "G18", "G19", "G20"],
+    "P03": ["G03", "G05", "G11", "G12", "G13", "G14", "G18"],
+    "P04": ["G02", "G04", "G06", "G07", "G08", "G09", "G10",
+            "G11", "G13", "G14", "G16", "G17"]
 }
 
+rules_cf = {
+    "P01": {
+        "G01": 0.6, "G02": 0.7, "G03": 0.8,
+        "G04": 0.6, "G06": 0.5, "G20": 0.7
+    },
+    "P02": {
+        "G01": 0.6, "G02": 0.5, "G03": 0.6,
+        "G05": 0.8, "G06": 0.6, "G15": 0.4,
+        "G18": 0.5, "G19": 0.6, "G20": 0.9
+    },
+    "P03": {
+        "G03": 0.6, "G05": 0.6, "G11": 0.6,
+        "G12": 0.5, "G13": 0.7, "G14": 0.6,
+        "G18": 0.5
+    },
+    "P04": {
+        "G02": 0.6, "G04": 0.5, "G06": 0.5,
+        "G07": 0.7, "G08": 0.6, "G09": 0.9,
+        "G10": 0.6, "G11": 0.5, "G13": 0.6,
+        "G14": 0.8, "G16": 0.9, "G17": 0.7
+    }
+}
 
 def forward_chaining(selected_gejala):
+    kandidat = []
+    for p, daftar_gejala in rules_fc.items():
+        if set(selected_gejala) & set(daftar_gejala):
+            kandidat.append(p)
+    return kandidat
+
+def certainty_factor(kandidat, selected_gejala):
     hasil = {}
-    for kode_penyakit, daftar_gejala in rules.items():
-        cocok = set(selected_gejala).intersection(set(daftar_gejala))
-        if cocok:
-            hasil[kode_penyakit] = len(cocok) / len(daftar_gejala)
+
+    for p in kandidat:
+        cf_combine = 0
+        first = True
+
+        for g in selected_gejala:
+            if g in rules_cf[p]:
+                cf = rules_cf[p][g]
+                if first:
+                    cf_combine = cf
+                    first = False
+                else:
+                    cf_combine = cf_combine + cf * (1 - cf_combine)
+
+        if cf_combine > 0:
+            hasil[p] = cf_combine
+
     return hasil
+
 
