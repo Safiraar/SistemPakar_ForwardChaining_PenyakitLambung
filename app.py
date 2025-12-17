@@ -89,22 +89,22 @@ elif st.session_state.page == "Diagnosa":
 
     # -------- KIRI: LIST GEJALA --------
     with col1:
-    st.markdown("### Daftar Gejala")
-    for kode, nama_gejala in gejala.items():
-        checked = kode in st.session_state.selected_gejala
-        if st.checkbox(nama_gejala, value=checked, key=kode):
-            if kode not in st.session_state.selected_gejala:
-                st.session_state.selected_gejala.append(kode)
+        st.markdown("### Daftar Gejala")
+        for kode, nama_gejala in gejala.items():
+            checked = kode in st.session_state.selected_gejala
+            if st.checkbox(nama_gejala, value=checked, key=kode):
+                if kode not in st.session_state.selected_gejala:
+                    st.session_state.selected_gejala.append(kode)
 
-            st.session_state.cf_user[kode] = st.selectbox(
-                "Tingkat Keyakinan",
-                list(cf_user_map.keys()),
-                key=f"cf_{kode}"
-            )
-        else:
-            if kode in st.session_state.selected_gejala:
-                st.session_state.selected_gejala.remove(kode)
-                st.session_state.cf_user.pop(kode, None)
+                st.session_state.cf_user[kode] = st.selectbox(
+                    "Tingkat Keyakinan",
+                    list(cf_user_map.keys()),
+                    key=f"cf_{kode}"
+                )
+            else:
+                if kode in st.session_state.selected_gejala:
+                    st.session_state.selected_gejala.remove(kode)
+                    st.session_state.cf_user.pop(kode, None)
 
 
 
