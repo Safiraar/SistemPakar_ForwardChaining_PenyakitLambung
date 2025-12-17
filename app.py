@@ -2,7 +2,12 @@
 # FILE: app.py
 # =============================
 import streamlit as st
-from rules import penyakit, gejala, forward_chaining
+from rules import (
+    penyakit, 
+    gejala,
+    forward_chaining, 
+    certainty_factor
+)
 
 st.set_page_config(page_title="Sistem Pakar Penyakit Lambung", layout="wide")
 
@@ -111,10 +116,15 @@ elif st.session_state.page == "Diagnosa":
         if not st.session_state.nama or not st.session_state.selected_gejala:
             st.warning("Nama dan minimal satu gejala wajib diisi.")
         else:
-            st.session_state.hasil = forward_chaining_cf(
-                st.session_state.selected_gejala
-            )
-            st.session_state.diagnosa_selesai = True
+            # 1. Forward Chaining → cari kandidat penyakit
+        kandidat = forward_chaining(st.session_state.selected_gejala)
+        # 2. Certainty Factor → hitung tingkat keyakinan
+        st.session_state.hasil = certainty_factor(
+            kandidat,
+            st.session_state.selected_gejala
+        )
+
+        st.session_state.diagnosa_selesai = True
 
     # =========================
     # PESAN SUKSES (DI BAWAH TOMBOL)
