@@ -1,3 +1,5 @@
+from app import cf_user_map
+
 penyakit = {
     "P01": "Maag",
     "P02": "GERD",
@@ -67,25 +69,29 @@ def forward_chaining(selected_gejala):
             kandidat.append(p)
     return kandidat
 
-def certainty_factor(kandidat, selected_gejala):
+def certainty_factor(kandidat, selected_gejala, cf_user_input):
     hasil = {}
 
     for p in kandidat:
-        cf_combine = 0
-        first = True
+        cf_values = []
 
         for g in selected_gejala:
-            if g in rules_cf[p]:
-                cf = rules_cf[p][g]
-                if first:
-                    cf_combine = cf
-                    first = False
-                else:
-                    cf_combine = cf_combine + cf * (1 - cf_combine)
+            if g in rules_cf[p] and g in cf_user_input:
+                cf_pakar = rules_cf[p][g]
+                cf_user = cf_user_map[cf_user_input[g]]
+                cf_values.append(cf_pakar * cf_user)
+
+        # Urutkan CF terbesar → terkecil
+        cf_values.sort(reverse=True)
+
+        cf_combine = 0
+        for cf in cf_values:
+            cf_combine = cf_combine + cf * (1 - cf_combine)
 
         if cf_combine > 0:
             hasil[p] = cf_combine
 
     return hasil
+
 
 
