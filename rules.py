@@ -88,7 +88,7 @@ def certainty_factor(kandidat, selected_gejala, cf_user_input):
                 cf_user = cf_user_map[cf_user_input[g]]
                 cf_values.append(cf_pakar * cf_user)
 
-        # Urutkan CF terbesar → terkecil
+        # Urutkan CF terbesar ke terkecil
         cf_values.sort(reverse=True)
 
         cf_combine = 0
@@ -99,6 +99,4 @@ def certainty_factor(kandidat, selected_gejala, cf_user_input):
             hasil[p] = cf_combine
 
     return hasil
-
-
 
