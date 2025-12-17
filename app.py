@@ -140,8 +140,10 @@ elif st.session_state.page == "Diagnosa":
             # 2. Certainty Factor → hitung tingkat keyakinan
             st.session_state.hasil = certainty_factor(
                 kandidat,
-                st.session_state.selected_gejala
+                st.session_state.selected_gejala,
+                st.session_state.cf_user
             )
+
             st.session_state.diagnosa_selesai = True
 
     # =========================
