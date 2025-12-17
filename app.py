@@ -46,7 +46,7 @@ if st.session_state.page == "Beranda":
         "Sistem ini dirancang untuk membantu mendeteksi kemungkinan penyakit lambung "
         "berdasarkan gejala yang Anda rasakan. \n\n"
         "Anda akan diminta untuk memasukkan identitas singkat serta memilih gejala, "
-        "kemudian sistem akan melakukan analisis menggunakan metode **Forward Chaining**."
+        "kemudian sistem akan melakukan analisis menggunakan metode **Forward Chaining** dan **Certainty Factor**."
     )
     st.info("Gunakan menu di samping kiri untuk melanjutkan ke halaman Diagnosa.")
 
