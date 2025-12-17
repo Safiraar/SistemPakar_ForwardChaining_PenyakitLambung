@@ -91,7 +91,7 @@ elif st.session_state.page == "Diagnosa":
 
     # -------- KANAN: RECEIPT REAL-TIME --------
     with col2:
-        st.markdown("### Ringkasan (Real-Time)")
+        st.markdown("### Ringkasan")
         st.write(f"**Nama** : {st.session_state.nama}")
         st.write(f"**Usia** : {st.session_state.usia} tahun")
         st.write("**Gejala yang dipilih:**")
@@ -151,7 +151,9 @@ elif st.session_state.page == "Hasil":
 
         st.divider()
         st.subheader("Hasil Diagnosa")
-        st.success(f"Penyakit Anda: **{penyakit[kode_tertinggi]}**")
+        st.success(f"Penyakit Anda : **{penyakit[kode_tertinggi]}**")
         # st.write(f"Dengan tingkat kecocokan: **{hasil_urut[kode_tertinggi]*100:.2f}%**")
 
     st.caption("⚠️ Sistem ini hanya sebagai alat bantu, bukan pengganti diagnosis dokter.")
+    
+st.sidebar.caption("Sistem by: Safira Aulia Rahma-4611422125")
