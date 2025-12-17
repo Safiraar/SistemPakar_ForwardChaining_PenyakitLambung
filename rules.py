@@ -1,5 +1,12 @@
 from app import cf_user_map
 
+cf_user_map = {
+    "Tidak Yakin": 0.2,
+    "Cukup Yakin": 0.5,
+    "Yakin": 0.8,
+    "Sangat Yakin": 1.0
+}
+
 penyakit = {
     "P01": "Maag",
     "P02": "GERD",
