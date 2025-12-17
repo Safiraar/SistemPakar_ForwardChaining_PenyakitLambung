@@ -117,14 +117,13 @@ elif st.session_state.page == "Diagnosa":
             st.warning("Nama dan minimal satu gejala wajib diisi.")
         else:
             # 1. Forward Chaining → cari kandidat penyakit
-        kandidat = forward_chaining(st.session_state.selected_gejala)
-        # 2. Certainty Factor → hitung tingkat keyakinan
-        st.session_state.hasil = certainty_factor(
-            kandidat,
-            st.session_state.selected_gejala
-        )
-
-        st.session_state.diagnosa_selesai = True
+            kandidat = forward_chaining(st.session_state.selected_gejala)
+            # 2. Certainty Factor → hitung tingkat keyakinan
+            st.session_state.hasil = certainty_factor(
+                kandidat,
+                st.session_state.selected_gejala
+            )
+            st.session_state.diagnosa_selesai = True
 
     # =========================
     # PESAN SUKSES (DI BAWAH TOMBOL)
