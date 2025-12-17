@@ -6,7 +6,8 @@ from rules import (
     penyakit, 
     gejala,
     forward_chaining, 
-    certainty_factor
+    certainty_factor,
+    cf_user_map
 )
 
 st.set_page_config(page_title="Sistem Pakar Penyakit Lambung", layout="wide")
