@@ -8,7 +8,7 @@ st.set_page_config(page_title="Sistem Pakar Penyakit Lambung", layout="wide")
 
 # ===== Session State =====
 if "page" not in st.session_state:
-    st.session_state.page = "Pengenalan"
+    st.session_state.page = "Beranda"
 
 if "diagnosa_selesai" not in st.session_state:
     st.session_state.diagnosa_selesai = False
@@ -26,16 +26,16 @@ if "hasil" not in st.session_state:
     st.session_state.hasil = {}
 
 # ===== Sidebar Navigation =====
-st.sidebar.title("📌 Navigasi")
+st.sidebar.title("📌 Page")
 st.session_state.page = st.sidebar.radio(
     "Pilih Halaman",
-    ["Pengenalan", "Diagnosa", "Hasil"]
+    ["Beranda", "Diagnosa", "Hasil"]
 )
 
 # =============================
-# PAGE 1: PENGENALAN
+# PAGE 1: BERANDA
 # =============================
-if st.session_state.page == "Pengenalan":
+if st.session_state.page == "Beranda":
     st.title("🩺 Sistem Pakar Deteksi Penyakit Lambung")
     st.write(
         "Sistem ini dirancang untuk membantu mendeteksi kemungkinan penyakit lambung "
@@ -111,7 +111,7 @@ elif st.session_state.page == "Diagnosa":
         if not st.session_state.nama or not st.session_state.selected_gejala:
             st.warning("Nama dan minimal satu gejala wajib diisi.")
         else:
-            st.session_state.hasil = forward_chaining(
+            st.session_state.hasil = forward_chaining_cf(
                 st.session_state.selected_gejala
             )
             st.session_state.diagnosa_selesai = True
@@ -154,6 +154,10 @@ elif st.session_state.page == "Hasil":
         st.success(f"Penyakit Anda : **{penyakit[kode_tertinggi]}**")
         # st.write(f"Dengan tingkat kecocokan: **{hasil_urut[kode_tertinggi]*100:.2f}%**")
 
+        st.subheader("Detail Certainty Factor")
+        for k, v in hasil_urut.items():
+            st.write(f"{penyakit[k]} : {v*100:.2f}%")
+            
     st.caption("⚠️ Sistem ini hanya sebagai alat bantu.")
     
 st.sidebar.caption("Sistem by: Safira Aulia Rahma-4611422125")
