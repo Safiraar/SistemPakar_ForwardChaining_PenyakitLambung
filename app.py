@@ -48,18 +48,35 @@ if st.session_state.page == "Pengenalan":
 elif st.session_state.page == "Diagnosa":
     st.title("📝 Input Data & Gejala")
 
+    # =========================
+    # INPUT DATA USER
+    # =========================
     st.subheader("Data Pengguna")
-    st.session_state.nama = st.text_input("Nama", st.session_state.nama)
-    st.session_state.usia = st.number_input("Usia", min_value=0, max_value=120, value=st.session_state.usia)
+
+    st.session_state.nama = st.text_input(
+        "Nama",
+        st.session_state.nama
+    )
+
+    st.session_state.usia = st.number_input(
+        "Usia",
+        min_value=0,
+        max_value=120,
+        value=st.session_state.usia
+    )
 
     st.divider()
+
+    # =========================
+    # PILIH GEJALA (2 KOLOM)
+    # =========================
     st.subheader("Pilih Gejala")
 
     col1, col2 = st.columns(2)
 
-    # ===== KIRI: LIST GEJALA =====
+    # -------- KIRI: LIST GEJALA --------
     with col1:
-        st.markdown("**Daftar Gejala**")
+        st.markdown("### Daftar Gejala")
         for kode, nama_gejala in gejala.items():
             checked = kode in st.session_state.selected_gejala
             if st.checkbox(nama_gejala, value=checked, key=kode):
@@ -69,25 +86,41 @@ elif st.session_state.page == "Diagnosa":
                 if kode in st.session_state.selected_gejala:
                     st.session_state.selected_gejala.remove(kode)
 
-    # ===== KANAN: RECEIPT REAL-TIME =====
+    # -------- KANAN: RECEIPT REAL-TIME --------
     with col2:
-        st.markdown("**Ringkasan (Real-Time)**")
-        st.write(f"Nama : {st.session_state.nama}")
-        st.write(f"Usia : {st.session_state.usia} tahun")
-        st.write("Gejala yang dipilih:")
+        st.markdown("### Ringkasan (Real-Time)")
+        st.write(f"**Nama** : {st.session_state.nama}")
+        st.write(f"**Usia** : {st.session_state.usia} tahun")
+        st.write("**Gejala yang dipilih:**")
+
         if st.session_state.selected_gejala:
             for g in st.session_state.selected_gejala:
                 st.write(f"- {gejala[g]}")
         else:
-            st.caption("Belum ada gejala dipilih")
+            st.caption("Belum ada gejala yang dipilih")
 
+    st.divider()
+
+    # =========================
+    # TOMBOL PROSES DIAGNOSA
+    # =========================
     if st.button("🔍 Proses Diagnosa"):
         if not st.session_state.nama or not st.session_state.selected_gejala:
             st.warning("Nama dan minimal satu gejala wajib diisi.")
         else:
-            st.session_state.hasil = forward_chaining(st.session_state.selected_gejala)
-            st.session_state.page = "Hasil"
-            st.rerun()
+            st.session_state.hasil = forward_chaining(
+                st.session_state.selected_gejala
+            )
+            st.session_state.diagnosa_selesai = True
+
+    # =========================
+    # PESAN SUKSES (DI BAWAH TOMBOL)
+    # =========================
+    if st.session_state.diagnosa_selesai:
+        st.success(
+            "✅ Berhasil melakukan diagnosa. "
+            "Silakan menuju halaman **Hasil** melalui menu di sidebar."
+        )
 
 # =============================
 # PAGE 3: HASIL
@@ -114,8 +147,8 @@ elif st.session_state.page == "Hasil":
             st.write(f"- {gejala[g]}")
 
         st.divider()
-        st.subheader("Hasil Deteksi")
-        st.success(f"Kemungkinan terbesar: **{penyakit[kode_tertinggi]}**")
-        st.write(f"Tingkat kecocokan: **{hasil_urut[kode_tertinggi]*100:.2f}%**")
+        st.subheader("Hasil Diagnosa")
+        st.success(f"Penyakit Anda: **{penyakit[kode_tertinggi]}**")
+        # st.write(f"Dengan tingkat kecocokan: **{hasil_urut[kode_tertinggi]*100:.2f}%**")
 
     st.caption("⚠️ Sistem ini hanya sebagai alat bantu, bukan pengganti diagnosis dokter.")
